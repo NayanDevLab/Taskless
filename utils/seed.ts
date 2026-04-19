@@ -40,18 +40,20 @@ const STANDARD_TEMPLATES = [
     description: 'Remember when you are nearby.',
     icon: 'MapPin',
     default_context: JSON.stringify({ location: '', purpose: '' }),
-  }
+  },
 ];
 
 export const seedTemplates = async (db: SQLiteDatabase) => {
-  const result = await db.getAllAsync<{ count: number }>('SELECT COUNT(id) as count FROM templates');
-  
+  const result = await db.getAllAsync<{ count: number }>(
+    'SELECT COUNT(id) as count FROM templates',
+  );
+
   if (result[0].count === 0) {
     const timestamp = Date.now();
     for (const t of STANDARD_TEMPLATES) {
       await db.runAsync(
         'INSERT INTO templates (id, category, title, description, icon, default_context, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [t.id, t.category, t.title, t.description, t.icon, t.default_context, timestamp]
+        [t.id, t.category, t.title, t.description, t.icon, t.default_context, timestamp],
       );
     }
   }

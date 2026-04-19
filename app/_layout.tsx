@@ -12,7 +12,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
-  const init = useTaskStore(state => state.init);
+  const init = useTaskStore((state) => state.init);
 
   useEffect(() => {
     async function prepare() {
@@ -21,7 +21,7 @@ export default function RootLayout() {
         const db = await initDB();
         await seedTemplates(db);
         await init(db);
-        
+
         // You can leave hasSeenOnboarding logic to the index.tsx as we did
       } catch (e) {
         console.warn(e);

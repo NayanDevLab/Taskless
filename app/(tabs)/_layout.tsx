@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Home, PlusCircle, Folder, RotateCcw } from 'lucide-react-native';
+import { TABS_SCREENS } from '../../constants/tabs';
 
 export default function TabLayout() {
   return (
@@ -16,37 +16,9 @@ export default function TabLayout() {
         tabBarInactiveTintColor: '#94A3B8', // muted color
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, size }) => <Home color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="add"
-        options={{
-          title: 'Add',
-          tabBarIcon: ({ color, size }) => (
-            <PlusCircle color="#10B981" size={32} style={{ marginBottom: 4 }} />
-          ),
-          tabBarLabelStyle: { display: 'none' }, // the middle icon stands alone
-        }}
-      />
-      <Tabs.Screen
-        name="templates"
-        options={{
-          title: 'Templates',
-          tabBarIcon: ({ color, size }) => <Folder color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="history"
-        options={{
-          title: 'History',
-          tabBarIcon: ({ color, size }) => <RotateCcw color={color} size={size} />,
-        }}
-      />
+      {TABS_SCREENS.map((screen) => (
+        <Tabs.Screen key={screen.name} name={screen.name} options={screen.options} />
+      ))}
     </Tabs>
   );
 }

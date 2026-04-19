@@ -44,23 +44,32 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   addAction: async (actionData) => {
     const db = get().db;
     if (!db) return;
-    
+
     const id = Math.random().toString(36).substring(2, 10);
     const created_at = Date.now();
-    
+
     await db.runAsync(
       'INSERT INTO actions (id, template_id, title, type, status, due_date, context_data, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [id, actionData.template_id, actionData.title, actionData.type, actionData.status, actionData.due_date, actionData.context_data, created_at]
+      [
+        id,
+        actionData.template_id,
+        actionData.title,
+        actionData.type,
+        actionData.status,
+        actionData.due_date,
+        actionData.context_data,
+        created_at,
+      ],
     );
-    
+
     await get().fetchActions();
   },
 
   updateActionStatus: async (id, status) => {
     const db = get().db;
     if (!db) return;
-    
+
     await db.runAsync('UPDATE actions SET status = ? WHERE id = ?', [status, id]);
     await get().fetchActions();
-  }
+  },
 }));

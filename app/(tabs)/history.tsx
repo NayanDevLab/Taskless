@@ -1,9 +1,10 @@
-import { View, Text, SafeAreaView } from 'react-native';
+import { View, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function History() {
   return (
-    <SafeAreaView className="flex-1 bg-background justify-center items-center">
-      <Text className="text-text text-2xl font-bold">History</Text>
+    <SafeAreaView className="flex-1 items-center justify-center bg-background">
+      <Text className="text-2xl font-bold text-text">History</Text>
     </SafeAreaView>
   );
 }

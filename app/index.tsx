@@ -18,15 +18,22 @@ export default function Index() {
 
   if (!isReady) {
     return (
-      <View style={{ flex: 1, backgroundColor: '#0F172A', justifyContent: 'center', alignItems: 'center' }}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: '#0F172A',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <ActivityIndicator size="large" color="#3B82F6" />
       </View>
     );
   }
 
   if (!hasSeenOnboarding) {
-    return <Redirect href={"/onboarding" as Href} />;
+    return <Redirect href={'/onboarding' as Href} />;
   }
 
-  return <Redirect href={"/(tabs)" as Href} />;
+  return <Redirect href={'/(tabs)' as Href} />;
 }

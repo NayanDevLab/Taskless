@@ -4,7 +4,7 @@ export const dbName = 'taskless.db';
 
 export const initDB = async () => {
   const db = await SQLite.openDatabaseAsync(dbName);
-  
+
   await db.execAsync(`
     PRAGMA journal_mode = WAL;
     

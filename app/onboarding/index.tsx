@@ -1,63 +1,45 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, Dimensions, Animated } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, Href } from 'expo-router';
 import { setStorageItem, StorageKeys } from '../../utils/storage';
-import { BellRing, CheckSquare, Zap, ChevronRight, Check } from 'lucide-react-native';
-
-const { width } = Dimensions.get('window');
-
-const SLIDES = [
-  {
-    id: 1,
-    title: "You don't forget tasks.",
-    subtitle: "You forget situations.",
-    description: "Missed a call? Forgot the groceries? Taskless thinks in real-life contexts, not boring lists.",
-    icon: <BellRing color="#3B82F6" size={64} />,
-  },
-  {
-    id: 2,
-    title: "Choose what you want to do.",
-    subtitle: "We handle the rest.",
-    description: "Pick a template like 'Call Someone' or 'Buy Something' and add it in seconds.",
-    icon: <CheckSquare color="#10B981" size={64} />,
-  },
-  {
-    id: 3,
-    title: "Fast. Simple.",
-    subtitle: "No thinking required.",
-    description: "Your actions prioritized cleanly, ready when you need them. Let's make things happen.",
-    icon: <Zap color="#8B5CF6" size={64} />,
-  }
-];
+import { ChevronRight, Check } from 'lucide-react-native';
+import { ONBOARDING_STRINGS, ONBOARDING_SLIDES_DATA } from '../../constants/strings';
+import OnboardingSlide from '../../components/onboarding/OnboardingSlide';
+import OnboardingPagination from '../../components/onboarding/OnboardingPagination';
+import PrimaryButton from '../../components/ui/PrimaryButton';
 
 export default function Onboarding() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNext = async () => {
-    if (currentIndex < SLIDES.length - 1) {
-      setCurrentIndex(prev => prev + 1);
+    if (currentIndex < ONBOARDING_SLIDES_DATA.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
     } else {
-      // Mark as seen and go to tabs
-      await setStorageItem(StorageKeys.HAS_SEEN_ONBOARDING, 'true');
-      router.replace('/(tabs)' as Href);
+      await finishOnboarding();
     }
   };
 
   const handleSkip = async () => {
+    await finishOnboarding();
+  };
+
+  const finishOnboarding = async () => {
     await setStorageItem(StorageKeys.HAS_SEEN_ONBOARDING, 'true');
     router.replace('/(tabs)' as Href);
   };
 
-  const currentSlide = SLIDES[currentIndex];
+  const currentSlide = ONBOARDING_SLIDES_DATA[currentIndex];
+  const isLastSlide = currentIndex === ONBOARDING_SLIDES_DATA.length - 1;
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <View className="flex-1 px-6 pt-10 pb-6 justify-between">
+      <View className="flex-1 justify-between px-6 pb-6 pt-10">
         {/* Header - Skip Button */}
         <View className="flex-row justify-end">
-          {currentIndex < SLIDES.length - 1 ? (
+          {!isLastSlide ? (
             <TouchableOpacity onPress={handleSkip}>
-              <Text className="text-muted font-medium text-lg">Skip</Text>
+              <Text className="text-lg font-medium text-muted">{ONBOARDING_STRINGS.SKIP}</Text>
             </TouchableOpacity>
           ) : (
             <View style={{ height: 28 }} />
@@ -65,52 +47,26 @@ export default function Onboarding() {
         </View>
 
         {/* Content */}
-        <View className="items-center justify-center flex-1 gap-10">
-          <View className="w-32 h-32 rounded-full bg-card items-center justify-center shadow-lg border border-border">
-            {currentSlide.icon}
-          </View>
-          
-          <View className="items-center gap-3 px-4">
-            <Text className="text-text text-3xl font-bold text-center">
-              {currentSlide.title}
-            </Text>
-            <Text className="text-primary text-2xl font-bold text-center">
-              {currentSlide.subtitle}
-            </Text>
-            <Text className="text-muted text-center text-lg mt-4 leading-relaxed">
-              {currentSlide.description}
-            </Text>
-          </View>
-        </View>
+        <OnboardingSlide {...currentSlide} />
 
         {/* Footer Area */}
         <View className="gap-8 pb-8">
-          {/* Progress Indicators */}
-          <View className="flex-row justify-center gap-2">
-            {SLIDES.map((_, index) => (
-              <View 
-                key={index} 
-                className={`h-2 rounded-full transition-all ${
-                  index === currentIndex ? 'w-8 bg-primary' : 'w-2 bg-border'
-                }`} 
-              />
-            ))}
-          </View>
+          <OnboardingPagination
+            totalSlides={ONBOARDING_SLIDES_DATA.length}
+            currentIndex={currentIndex}
+          />
 
-          {/* Action Button */}
-          <TouchableOpacity 
+          <PrimaryButton
             onPress={handleNext}
-            className="w-full bg-primary py-4 rounded-2xl flex-row justify-center items-center gap-2 shadow-lg shadow-primary/30"
-          >
-            <Text className="text-white text-xl font-bold">
-              {currentIndex === SLIDES.length - 1 ? 'Start Using' : 'Next'}
-            </Text>
-            {currentIndex === SLIDES.length - 1 ? (
-              <Check color="#fff" size={24} />
-            ) : (
-              <ChevronRight color="#fff" size={24} />
-            )}
-          </TouchableOpacity>
+            title={isLastSlide ? ONBOARDING_STRINGS.START_USING : ONBOARDING_STRINGS.NEXT}
+            icon={
+              isLastSlide ? (
+                <Check color="#fff" size={24} />
+              ) : (
+                <ChevronRight color="#fff" size={24} />
+              )
+            }
+          />
         </View>
       </View>
     </SafeAreaView>
